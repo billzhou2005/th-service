@@ -1,4 +1,4 @@
-module gorm-test
+module github.com/billzhou2005/th-service
 
 go 1.14
 

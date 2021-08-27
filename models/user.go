@@ -6,9 +6,10 @@ import (
 
 type User struct {
 	gorm.Model
-	ID    int
-	Name  string
-	Email string
+	ID       int
+	Name     string
+	Email    string
+	Password string
 }
 
 //create a user
@@ -49,6 +50,3 @@ func DeleteUser(db *gorm.DB, User *User, id string) (err error) {
 	db.Where("id = ?", id).Delete(User)
 	return nil
 }
-
-
-

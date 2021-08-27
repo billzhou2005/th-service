@@ -1,8 +1,9 @@
 package main
 
 import (
-	"gorm-test/controllers"
 	"net/http"
+
+	"github.com/billzhou2005/th-service/controllers"
 
 	"github.com/gin-gonic/gin"
 )

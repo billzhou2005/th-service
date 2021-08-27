@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"gorm-test/database"
-	"gorm-test/models"
-	"gorm.io/gorm"
 	"net/http"
+
+	"github.com/billzhou2005/th-service/database"
+	"github.com/billzhou2005/th-service/models"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type UserRepo struct {
