@@ -10,11 +10,12 @@ import (
 
 func main() {
 	r := setupRouter()
-	_ = r.Run(":8081")
+	_ = r.Run(":16102")
 }
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(CORSMiddleware())
 
 	r.GET("ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "pong")
@@ -28,4 +29,20 @@ func setupRouter() *gin.Engine {
 	r.DELETE("/users/:id", userRepo.DeleteUser)
 
 	return r
+}
+
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
 }
