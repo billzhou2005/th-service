@@ -6,18 +6,10 @@ import (
 
 type User struct {
 	gorm.Model
-	ID       int
-	Name     string
-	Email    string
-	Password string
-	Cards    Cards
-}
-type Cards struct {
-	CardOne   int8
-	CardTwo   int8
-	CardThree int8
-	CardFour  int8
-	CardFive  int8
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 //create a user
