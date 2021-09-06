@@ -13,7 +13,6 @@ type User struct {
 	Cards    Cards
 }
 type Cards struct {
-	gorm.Model
 	CardOne   int8
 	CardTwo   int8
 	CardThree int8
