@@ -10,6 +10,15 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	Cards    Cards
+}
+type Cards struct {
+	gorm.Model
+	CardOne   int8
+	CardTwo   int8
+	CardThree int8
+	CardFour  int8
+	CardFive  int8
 }
 
 //create a user
