@@ -12,6 +12,9 @@ type Player struct {
 	Username  string `json:"username"`
 	Cards     Cards  `json:"cards"`
 	Cardstype string `json:"cardstype"`
+	CIfirst   int    `json:"cifirst"`
+	CIsecond  int    `json:"cisecond"`
+	CIthird   int    `json:"cithird"`
 	Tablerank int    `json:"tablerank"`
 }
 
@@ -27,11 +30,12 @@ type Card struct {
 
 //黑桃 1（spade 0-12）、红桃 2（heart 13-25）、梅花 3（club 26-38）、方块 4（dianmond 39-51）
 
-func Cardgen() [9]Player {
+func Cardgen(numofplayers int) interface{} {
 
 	var players [9]Player
+	cardtypecount := make(map[string]int)
 
-	for i := 0; i < 9; i++ {
+	for i := 0; i < numofplayers; i++ {
 		players[i].Username = "player" + strconv.Itoa(i+1)
 	}
 	//t1 := time.Now().UnixNano() / 1e6 //1564552562
@@ -41,8 +45,8 @@ func Cardgen() [9]Player {
 	//nums[0] = 44
 	//nums[1] = 45
 	//nums[2] = 46
-	fmt.Println(nums)
-	for i := 0; i < 9; i++ {
+	//fmt.Println(nums)
+	for i := 0; i < numofplayers; i++ {
 		players[i].Cards.Cardone.Points = nums[3*i] % 13
 		players[i].Cards.Cardone.Suits = int(nums[3*i]/13) + 1
 		players[i].Cards.Cardtwo.Points = nums[3*i+1] % 13
@@ -50,8 +54,10 @@ func Cardgen() [9]Player {
 		players[i].Cards.Cardthree.Points = nums[3*i+2] % 13
 		players[i].Cards.Cardthree.Suits = int(nums[3*i+2]/13) + 1
 
-		players[i].Cardstype = cardsType(players[i].Cards)
+		players[i] = cardsTypeAndCI(players[i])
+		cardtypecount[players[i].Cardstype] += 1
 	}
+	fmt.Println(cardtypecount)
 	//fmt.Println(players)
 	//}
 	//fmt.Printf("%+v\n", players)
@@ -61,7 +67,8 @@ func Cardgen() [9]Player {
 	return players
 }
 
-func cardsType(cards Cards) string {
+func cardsTypeAndCI(players Player) Player {
+	cards := players.Cards
 	cardspoints := make([]int, 0)
 	cardstype := "highcard"
 
@@ -105,7 +112,11 @@ func cardsType(cards Cards) string {
 			}
 		}
 	}
-	return cardstype
+	players.Cardstype = cardstype
+	players.CIfirst = cardspoints[2]
+	players.CIsecond = cardspoints[1]
+	players.CIthird = cardspoints[0]
+	return players
 }
 
 func generateRandomNumber(start int, end int, count int) []int {

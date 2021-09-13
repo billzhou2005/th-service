@@ -19,7 +19,8 @@ func setupRouter() *gin.Engine {
 	r.Use(CORSMiddleware())
 
 	r.GET("/cardgen", func(c *gin.Context) {
-		players := models.Cardgen()
+		numofplayers := 6
+		players := models.Cardgen(numofplayers)
 		c.JSON(http.StatusOK, players)
 	})
 
