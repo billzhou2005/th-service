@@ -17,7 +17,8 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
-	r.GET("ping", func(c *gin.Context) {
+	r.GET("/ping", func(c *gin.Context) {
+		cargen.cardgen([9]players)
 		c.JSON(http.StatusOK, "pong")
 	})
 
