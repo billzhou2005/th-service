@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/billzhou2005/th-service/controllers"
+	"github.com/billzhou2005/th-service/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,8 +19,8 @@ func setupRouter() *gin.Engine {
 	r.Use(CORSMiddleware())
 
 	r.GET("/ping", func(c *gin.Context) {
-		cargen.cardgen([9]players)
-		c.JSON(http.StatusOK, "pong")
+		players := models.Cardgen()
+		c.JSON(http.StatusOK, players)
 	})
 
 	userRepo := controllers.New()
