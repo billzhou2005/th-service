@@ -1,21 +1,26 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
+	"os"
 	"sort"
 	"strconv"
 	"time"
+
+	"github.com/jaracil/ei"
 )
 
 type Player struct {
-	Username  string `json:"username"`
-	Cards     Cards  `json:"cards"`
-	Cardstype string `json:"cardstype"`
-	CIfirst   int    `json:"cifirst"`
-	CIsecond  int    `json:"cisecond"`
-	CIthird   int    `json:"cithird"`
-	Tablerank int    `json:"tablerank"`
+	Username   string `json:"username"`
+	Cards      Cards  `json:"cards"`
+	Cardstype  string `json:"cardstype"`
+	CIfirst    int    `json:"cifirst"`
+	CIsecond   int    `json:"cisecond"`
+	CIthird    int    `json:"cithird"`
+	Cardsscore int    `json:"Cardsscore"`
 }
 
 type Cards struct {
@@ -28,10 +33,7 @@ type Card struct {
 	Suits  int `json:"suits"`
 }
 
-//黑桃 1（spade 0-12）、红桃 2（heart 13-25）、梅花 3（club 26-38）、方块 4（dianmond 39-51）
-
 func Cardgen(numofplayers int) interface{} {
-
 	var players [9]Player
 	cardtypecount := make(map[string]int)
 
@@ -41,10 +43,11 @@ func Cardgen(numofplayers int) interface{} {
 	//t1 := time.Now().UnixNano() / 1e6 //1564552562
 	//fmt.Println(t1)
 	//for i := 0; i < 3; i++ {
+	//黑桃 1（spade 0-12）、红桃 2（heart 13-25）、梅花 3（club 26-38）、方块 4（dianmond 39-51）
 	nums := generateRandomNumber(0, 51, 27)
-	//nums[0] = 44
-	//nums[1] = 45
-	//nums[2] = 46
+	//nums[0] = 45
+	//nums[1] = 9
+	//nums[2] = 35
 	//fmt.Println(nums)
 	for i := 0; i < numofplayers; i++ {
 		players[i].Cards.Cardone.Points = nums[3*i] % 13
@@ -63,6 +66,96 @@ func Cardgen(numofplayers int) interface{} {
 	//fmt.Printf("%+v\n", players)
 	//t2 := time.Now().UnixNano() / 1e6 //1564552562
 	//fmt.Println(t2 - t1)
+	jsonfile, err := os.Open("./models/jhlevel.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer jsonfile.Close()
+	bytevalue, _ := ioutil.ReadAll(jsonfile)
+
+	var jhlevel interface{}
+	json.Unmarshal(bytevalue, &jhlevel)
+	for j := 0; j < numofplayers-1; j++ {
+		for k := j + 1; k < numofplayers; k++ {
+			//fmt.Println(j, k, ei.N(jhlevel).M(players[j].Cardstype).IntZ(), ei.N(jhlevel).M(players[k].Cardstype).IntZ())
+			if ei.N(jhlevel).M(players[j].Cardstype).IntZ() > ei.N(jhlevel).M(players[k].Cardstype).IntZ() {
+				players[j].Cardsscore += 1
+			} else if ei.N(jhlevel).M(players[j].Cardstype).IntZ() < ei.N(jhlevel).M(players[k].Cardstype).IntZ() {
+				players[k].Cardsscore += 1
+			} else {
+				switch players[j].Cardstype {
+				case "highcard":
+					if players[j].CIfirst > players[k].CIfirst {
+						players[j].Cardsscore += 1
+					} else if players[j].CIfirst < players[k].CIfirst {
+						players[k].Cardsscore += 1
+					} else {
+						if players[j].CIsecond > players[k].CIsecond {
+							players[j].Cardsscore += 1
+						} else if players[j].CIsecond < players[k].CIsecond {
+							players[k].Cardsscore += 1
+						} else {
+							if players[j].CIthird > players[k].CIthird {
+								players[j].Cardsscore += 1
+							} else if players[j].CIthird < players[k].CIthird {
+								players[k].Cardsscore += 1
+							}
+						}
+					}
+				case "pair":
+					if players[j].CIfirst > players[k].CIfirst {
+						players[j].Cardsscore += 1
+					} else if players[j].CIfirst < players[k].CIfirst {
+						players[k].Cardsscore += 1
+					} else {
+						if players[j].CIthird > players[k].CIthird {
+							players[j].Cardsscore += 1
+						} else if players[j].CIthird < players[k].CIthird {
+							players[k].Cardsscore += 1
+						}
+					}
+				case "straight":
+					if players[j].CIfirst > players[k].CIfirst {
+						players[j].Cardsscore += 1
+					} else if players[j].CIfirst < players[k].CIfirst {
+						players[k].Cardsscore += 1
+					}
+				case "flush":
+					if players[j].CIfirst > players[k].CIfirst {
+						players[j].Cardsscore += 1
+					} else if players[j].CIfirst < players[k].CIfirst {
+						players[k].Cardsscore += 1
+					} else {
+						if players[j].CIsecond > players[k].CIsecond {
+							players[j].Cardsscore += 1
+						} else if players[j].CIsecond < players[k].CIsecond {
+							players[k].Cardsscore += 1
+						} else {
+							if players[j].CIthird > players[k].CIthird {
+								players[j].Cardsscore += 1
+							} else if players[j].CIthird < players[k].CIthird {
+								players[k].Cardsscore += 1
+							}
+						}
+					}
+				case "straightflush":
+					if players[j].CIfirst > players[k].CIfirst {
+						players[j].Cardsscore += 1
+					} else if players[j].CIfirst < players[k].CIfirst {
+						players[k].Cardsscore += 1
+					}
+				case "bomb":
+					if players[j].CIfirst > players[k].CIfirst {
+						players[j].Cardsscore += 1
+					} else if players[j].CIfirst < players[k].CIfirst {
+						players[k].Cardsscore += 1
+					}
+				default:
+
+				}
+			}
+		}
+	}
 
 	return players
 }
@@ -82,6 +175,8 @@ func cardsTypeAndCI(players Player) Player {
 			cardstype = "bomb"
 		}
 	} else if cards.Cardone.Points == cards.Cardthree.Points {
+		cardstype = "pair"
+	} else if cards.Cardtwo.Points == cards.Cardthree.Points {
 		cardstype = "pair"
 	}
 
