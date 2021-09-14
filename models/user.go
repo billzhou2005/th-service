@@ -6,12 +6,44 @@ import (
 
 type User struct {
 	gorm.Model
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username   string  `json:"username"`
+	CardID     int     `json:"cardid"`
+	Card       [3]Card `json:"cards"`
+	Cardstype  string  `json:"cardstype"`
+	CIfirst    int     `json:"cifirst"`
+	CIsecond   int     `json:"cisecond"`
+	CIthird    int     `json:"cithird"`
+	Cardsscore int     `json:"cardsscore"`
 }
 
+type Card struct {
+	ID     int
+	Points int `json:"points"`
+	Suits  int `json:"suits"`
+}
+
+/*{
+	"username": "player1",
+	"cards": {
+		"cardone": {
+			"points": 6,
+			"suits": 4
+		},
+		"cardtwo": {
+			"points": 9,
+			"suits": 1
+		},
+		"cardthree": {
+			"points": 9,
+			"suits": 3
+		}
+	},
+	"cardstype": "highcard",
+	"cifirst": 9,
+	"cisecond": 9,
+	"cithird": 6,
+	"Cardsscore": 0
+}*/
 //create a user
 func CreateUser(db *gorm.DB, User *User) (err error) {
 	err = db.Create(User).Error

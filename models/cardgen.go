@@ -13,6 +13,7 @@ import (
 	"github.com/jaracil/ei"
 )
 
+/*
 type Player struct {
 	Username   string `json:"username"`
 	Cards      Cards  `json:"cards"`
@@ -22,19 +23,10 @@ type Player struct {
 	CIthird    int    `json:"cithird"`
 	Cardsscore int    `json:"Cardsscore"`
 }
-
-type Cards struct {
-	Cardone   Card `json:"cardone"`
-	Cardtwo   Card `json:"cardtwo"`
-	Cardthree Card `json:"cardthree"`
-}
-type Card struct {
-	Points int `json:"points"`
-	Suits  int `json:"suits"`
-}
+*/
 
 func Cardgen(numofplayers int) interface{} {
-	var players [9]Player
+	var players [9]User
 	cardtypecount := make(map[string]int)
 
 	for i := 0; i < numofplayers; i++ {
@@ -50,12 +42,12 @@ func Cardgen(numofplayers int) interface{} {
 	//nums[2] = 35
 	//fmt.Println(nums)
 	for i := 0; i < numofplayers; i++ {
-		players[i].Cards.Cardone.Points = nums[3*i] % 13
-		players[i].Cards.Cardone.Suits = int(nums[3*i]/13) + 1
-		players[i].Cards.Cardtwo.Points = nums[3*i+1] % 13
-		players[i].Cards.Cardtwo.Suits = int(nums[3*i+1]/13) + 1
-		players[i].Cards.Cardthree.Points = nums[3*i+2] % 13
-		players[i].Cards.Cardthree.Suits = int(nums[3*i+2]/13) + 1
+		players[i].Card[0].Points = nums[3*i] % 13
+		players[i].Card[0].Suits = int(nums[3*i]/13) + 1
+		players[i].Card[1].Points = nums[3*i+1] % 13
+		players[i].Card[1].Suits = int(nums[3*i+1]/13) + 1
+		players[i].Card[2].Points = nums[3*i+2] % 13
+		players[i].Card[2].Suits = int(nums[3*i+2]/13) + 1
 
 		players[i] = cardsTypeAndCI(players[i])
 		cardtypecount[players[i].Cardstype] += 1
@@ -160,28 +152,28 @@ func Cardgen(numofplayers int) interface{} {
 	return players
 }
 
-func cardsTypeAndCI(players Player) Player {
-	cards := players.Cards
+func cardsTypeAndCI(players User) User {
+	cards := players.Card
 	cardspoints := make([]int, 0)
 	cardstype := "highcard"
 
-	cardspoints = append(cardspoints, cards.Cardone.Points)
-	cardspoints = append(cardspoints, cards.Cardtwo.Points)
-	cardspoints = append(cardspoints, cards.Cardthree.Points)
+	cardspoints = append(cardspoints, cards[0].Points)
+	cardspoints = append(cardspoints, cards[1].Points)
+	cardspoints = append(cardspoints, cards[2].Points)
 
-	if cards.Cardone.Points == cards.Cardtwo.Points {
+	if cards[0].Points == cards[1].Points {
 		cardstype = "pair"
-		if cards.Cardtwo.Points == cards.Cardthree.Points {
+		if cards[1].Points == cards[2].Points {
 			cardstype = "bomb"
 		}
-	} else if cards.Cardone.Points == cards.Cardthree.Points {
+	} else if cards[0].Points == cards[2].Points {
 		cardstype = "pair"
-	} else if cards.Cardtwo.Points == cards.Cardthree.Points {
+	} else if cards[1].Points == cards[2].Points {
 		cardstype = "pair"
 	}
 
-	if cards.Cardone.Suits == cards.Cardtwo.Suits {
-		if cards.Cardtwo.Suits == cards.Cardthree.Suits {
+	if cards[0].Suits == cards[1].Suits {
+		if cards[1].Suits == cards[2].Suits {
 			cardstype = "flush"
 		}
 	}
