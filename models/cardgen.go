@@ -151,7 +151,7 @@ func Cardgen(numofplayers int) interface{} {
 						players[k].Cardsscore += 1
 					}
 				default:
-
+					fmt.Println("players[j].Cardstype valuee error")
 				}
 			}
 		}
@@ -204,13 +204,59 @@ func cardsTypeAndCI(players Player) Player {
 				} else {
 					cardstype = "straight"
 				}
+				cardspoints[0] = 11
+				cardspoints[1] = 12
+				cardspoints[2] = 13
 			}
 		}
 	}
 	players.Cardstype = cardstype
-	players.CIfirst = cardspoints[2]
-	players.CIsecond = cardspoints[1]
-	players.CIthird = cardspoints[0]
+	switch players.Cardstype {
+	case "highcard":
+		if cardspoints[0] == 0 {
+			players.CIfirst = cardspoints[0] + 13
+			players.CIsecond = cardspoints[2]
+			players.CIthird = cardspoints[1]
+		} else {
+			players.CIfirst = cardspoints[2]
+			players.CIsecond = cardspoints[1]
+			players.CIthird = cardspoints[0]
+		}
+	case "pair":
+		if cardspoints[0] == cardspoints[1] {
+			players.CIfirst = cardspoints[0]
+			if cardspoints[0] == 0 {
+				players.CIfirst = cardspoints[0] + 13
+			}
+			players.CIthird = cardspoints[2]
+		} else if cardspoints[1] == cardspoints[2] {
+			players.CIfirst = cardspoints[1]
+			players.CIthird = cardspoints[0]
+			if cardspoints[0] == 0 {
+				players.CIthird = cardspoints[0] + 13
+			}
+		}
+
+	case "straight":
+		players.CIfirst = cardspoints[2]
+	case "flush":
+		if cardspoints[0] == 0 {
+			players.CIfirst = cardspoints[0] + 13
+			players.CIsecond = cardspoints[2]
+			players.CIthird = cardspoints[1]
+		} else {
+			players.CIfirst = cardspoints[2]
+			players.CIsecond = cardspoints[1]
+			players.CIthird = cardspoints[0]
+		}
+	case "straightflush":
+		players.CIfirst = cardspoints[2]
+	case "bomb":
+		players.CIfirst = cardspoints[2]
+	default:
+		fmt.Println("players.Cardstype error")
+	}
+
 	return players
 }
 
