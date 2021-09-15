@@ -6,20 +6,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Username   string  `json:"username"`
-	CardID     int     `json:"cardid"`
-	Card       [3]Card `json:"cards"`
-	Cardstype  string  `json:"cardstype"`
-	CIfirst    int     `json:"cifirst"`
-	CIsecond   int     `json:"cisecond"`
-	CIthird    int     `json:"cithird"`
-	Cardsscore int     `json:"cardsscore"`
-}
-
-type Card struct {
-	ID     int
-	Points int `json:"points"`
-	Suits  int `json:"suits"`
+	Username string `json:"username"`
+	CardID   int    `json:"cardid"`
 }
 
 /*{

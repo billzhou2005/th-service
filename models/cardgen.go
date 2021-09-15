@@ -13,6 +13,21 @@ import (
 	"github.com/jaracil/ei"
 )
 
+type Player struct {
+	Name       string  `json:"name"`
+	Cards      [3]Card `gorm:"embedded" json:"cards"`
+	Cardstype  string  `json:"cardstype"`
+	CIfirst    int     `json:"cifirst"`
+	CIsecond   int     `json:"cisecond"`
+	CIthird    int     `json:"cithird"`
+	Cardsscore int     `json:"cardsscore"`
+}
+
+type Card struct {
+	Points int `json:"points"`
+	Suits  int `json:"suits"`
+}
+
 /*
 type Player struct {
 	Username   string `json:"username"`
@@ -26,11 +41,12 @@ type Player struct {
 */
 
 func Cardgen(numofplayers int) interface{} {
-	var players [9]User
+	var players [9]Player
+
 	cardtypecount := make(map[string]int)
 
 	for i := 0; i < numofplayers; i++ {
-		players[i].Username = "player" + strconv.Itoa(i+1)
+		players[i].Name = "player" + strconv.Itoa(i+1)
 	}
 	//t1 := time.Now().UnixNano() / 1e6 //1564552562
 	//fmt.Println(t1)
@@ -42,19 +58,17 @@ func Cardgen(numofplayers int) interface{} {
 	//nums[2] = 35
 	//fmt.Println(nums)
 	for i := 0; i < numofplayers; i++ {
-		players[i].Card[0].Points = nums[3*i] % 13
-		players[i].Card[0].Suits = int(nums[3*i]/13) + 1
-		players[i].Card[1].Points = nums[3*i+1] % 13
-		players[i].Card[1].Suits = int(nums[3*i+1]/13) + 1
-		players[i].Card[2].Points = nums[3*i+2] % 13
-		players[i].Card[2].Suits = int(nums[3*i+2]/13) + 1
+		players[i].Cards[0].Points = nums[3*i] % 13
+		players[i].Cards[0].Suits = int(nums[3*i]/13) + 1
+		players[i].Cards[1].Points = nums[3*i+1] % 13
+		players[i].Cards[1].Suits = int(nums[3*i+1]/13) + 1
+		players[i].Cards[2].Points = nums[3*i+2] % 13
+		players[i].Cards[2].Suits = int(nums[3*i+2]/13) + 1
 
 		players[i] = cardsTypeAndCI(players[i])
 		cardtypecount[players[i].Cardstype] += 1
 	}
-	fmt.Println(cardtypecount)
-	//fmt.Println(players)
-	//}
+	fmt.Println(cardtypecount, time.Now().String())
 	//fmt.Printf("%+v\n", players)
 	//t2 := time.Now().UnixNano() / 1e6 //1564552562
 	//fmt.Println(t2 - t1)
@@ -152,8 +166,8 @@ func Cardgen(numofplayers int) interface{} {
 	return players
 }
 
-func cardsTypeAndCI(players User) User {
-	cards := players.Card
+func cardsTypeAndCI(players Player) Player {
+	cards := players.Cards
 	cardspoints := make([]int, 0)
 	cardstype := "highcard"
 
