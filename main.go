@@ -5,13 +5,12 @@ import (
 
 	"github.com/billzhou2005/th-service/controllers"
 	"github.com/billzhou2005/th-service/models"
-
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := setupRouter()
-	_ = r.Run(":16102")
+	_ = r.Run(":8080")
 }
 
 func setupRouter() *gin.Engine {
