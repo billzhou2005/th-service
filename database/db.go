@@ -8,8 +8,17 @@ import (
 )
 
 const DB_USERNAME = "root"
+
+//const DB_USERNAME = "bill"
 const DB_PASSWORD = "zhoumb1202"
 const DB_NAME = "gin_gorm"
+
+//define for docker qmm-mysql
+//const DB_HOST = "docker.for.mac.localhost"
+
+//const DB_HOST = "localhost"
+//const DB_PORT = "3307"
+
 const DB_HOST = "127.0.0.1"
 const DB_PORT = "3306"
 

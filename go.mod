@@ -1,5 +1,4 @@
-module github.com/billzhou2005/th-service
-
+module th-service
 go 1.16
 
 require (

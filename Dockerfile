@@ -2,13 +2,12 @@ FROM golang:1.16-alpine
 
 # Set destination for COPY
 WORKDIR /app
+ADD . /app/
 
 ENV GOPROXY https://goproxy.cn
 # Download Go modules
 COPY go.mod .
 COPY go.sum .
-#RUN go get github.com/billzhou2005/th-service/controllers
-#RUN go get github.com/billzhou2005/th-service/models
 RUN go mod download
 
 # Copy the source code. Note the slash at the end, as explained in

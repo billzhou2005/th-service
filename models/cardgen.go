@@ -40,7 +40,7 @@ type Player struct {
 }
 */
 
-func Cardgen(numofplayers int) interface{} {
+func Cardgen(numofplayers int) [9]Player {
 	var players [9]Player
 
 	cardtypecount := make(map[string]int)

@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  db:
+    image: mysql
+    ports:
+      - "3307:3307"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=zhoumb1202"
+      - "MYSQL_USER=bill"
+      - "MYSQL_PASSWORD=zhoumb1202"
+      - "MYSQL_DATABASE=gin_grom"   
+  th-service:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ".:/app"
+    depends_on:
+      - db
+    links:
+      - "db:database"
