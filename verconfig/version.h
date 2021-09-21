@@ -12,7 +12,7 @@
 //! @COMMIT_REG@ (FL_SCM_COMMIT\s+)(\S*)?(\s*,.*)
 
 // 版本号
-#define FL_VERSION 0.0.3-SNAPSHOT
+#define FL_VERSION 0.0.3
 
 #define FL_VERSION_MAJOR 0
 #define FL_VERSION_MINOR 0
@@ -22,6 +22,6 @@
 // 分支名
 #define FL_SCM_BRANCH main,
 // commit_id
-#define FL_SCM_COMMIT d41ba92,
+#define FL_SCM_COMMIT 9571b22,
 
 #endif /* FLCONFIG_VERSION_H_ */
