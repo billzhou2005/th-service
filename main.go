@@ -1,11 +1,7 @@
 package main
 
 import (
-	"net/http"
-	"strconv"
 	"th-service/controllers"
-
-	"th-service/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,8 +15,8 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
-	r.GET("/cardgen/:id", cardgen)
 	tableRepo := controllers.Newtable()
+	r.GET("/cardgen", tableRepo.CreateTableFromCardgen)
 	r.POST("/tables", tableRepo.CreateTable)
 	r.GET("/tables", tableRepo.GetTables)
 	r.GET("/tables/:id", tableRepo.GetTable)
@@ -35,25 +31,6 @@ func setupRouter() *gin.Engine {
 	r.DELETE("/users/:id", userRepo.DeleteUser)
 
 	return r
-}
-func cardgen(c *gin.Context) {
-	id, _ := c.Params.Get("id")
-	//numofplayers := 9
-	numofplayers, err := strconv.Atoi(id)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Input id not number": err})
-		return
-	}
-	if numofplayers < 1 || numofplayers > 9 {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"Number range not 1-9": err})
-		return
-	}
-
-	players := models.Cardgen(numofplayers)
-	c.JSON(http.StatusOK, players)
-
-	//Save the cargen to database:gin_gorm/tables
-	controllers.SaveCardgenToTable(numofplayers, players)
 }
 
 func CORSMiddleware() gin.HandlerFunc {

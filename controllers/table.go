@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"strconv"
 
 	"th-service/database"
 	"th-service/models"
@@ -23,13 +26,32 @@ func Newtable() *TableRepo {
 	return &TableRepo{Db: db}
 }
 
-func SaveCardgenToTable(numberofplayers int, players [9]models.Player) {
+func (repository *TableRepo) SaveCardgenToTable(tableid int, numberofplayers int, players [9]models.Player) {
 	var table models.Table
+	tablelevelmap := make(map[string]int)
 	//var repository *TableRepo
 
-	table.TableID = 10020
-	table.Tablelevel = "primary"
+	table.TableID = tableid
+	//table.Tablelevel = "primary"
 	table.Numofplayers = numberofplayers
+
+	jsonfile, err := os.Open("./models/tablelevel.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer jsonfile.Close()
+	bytevalue, _ := ioutil.ReadAll(jsonfile)
+	json.Unmarshal(bytevalue, &tablelevelmap)
+
+	//calculate the tablelevel, primary/intermediate/advanced/vip/royalvip
+	basenum := 10000000
+	divres := tableid / basenum
+	for k, v := range tablelevelmap {
+		if divres == v {
+			table.Tablelevel = k
+		}
+	}
+
 	b, err := json.Marshal(players[0])
 	if err != nil {
 		panic(err)
@@ -76,11 +98,46 @@ func SaveCardgenToTable(numberofplayers int, players [9]models.Player) {
 	}
 	table.Player9 = string(b)
 
-	db := database.InitDb()
-	db.AutoMigrate(&models.Table{})
-	db.Create(&table)
-	fmt.Println("create table.tableID 10020,convert json array to string")
-	//return
+	errdb := models.CreateTable(repository.Db, &table)
+	if errdb != nil {
+		fmt.Println("models.CreateTable", errdb)
+		return
+	}
+}
+
+//create table from cardgen
+func (repository *TableRepo) CreateTableFromCardgen(c *gin.Context) {
+	//	tableid, _ := c.Params.Get("tableid")
+	//	numofp, _ := c.Params.Get("numofp")
+	tableidstr := c.Query("tableid")
+	numofpstr := c.Query("numofp")
+
+	//numofplayers := 9
+	numofplayers, err := strconv.Atoi(numofpstr)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"numofplayers not number": err})
+		return
+	}
+	if numofplayers < 1 || numofplayers > 9 {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"numofplayers range not 1-9": err})
+		return
+	}
+
+	tableid, errtableid := strconv.Atoi(tableidstr)
+	if errtableid != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"tableid not number": err})
+		return
+	}
+	if tableid < 10000000 || tableid >= 60000000 {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"tableid range not 10000000~59999999": err})
+		return
+	}
+
+	players := models.Cardgen(numofplayers)
+	c.JSON(http.StatusOK, players)
+
+	//sava players to db
+	repository.SaveCardgenToTable(tableid, numofplayers, players)
 }
 
 //create Table
