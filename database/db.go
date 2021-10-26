@@ -19,7 +19,7 @@ const DB_NAME = "gin_gorm"
 //const DB_HOST = "localhost"
 //const DB_PORT = "3307"
 
-const DB_HOST = "127.0.0.1"
+const DB_HOST = "140.143.149.188"
 const DB_PORT = "3306"
 
 var Db *gorm.DB

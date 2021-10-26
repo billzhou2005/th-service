@@ -1,4 +1,5 @@
 module th-service
+
 go 1.16
 
 require (
