@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	"th-service/database"
@@ -26,10 +25,18 @@ func New() *UserRepo {
 //create user
 func (repository *UserRepo) CreateUser(c *gin.Context) {
 	var user models.User
+	var users []models.User
+
 	c.BindJSON(&user)
+	_ = models.GetUserByUsername(repository.Db, &users, user.Username)
+	if len(users) > 0 {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "用户名已经被注册！"})
+		return
+	}
+
 	id := ksuid.New()
 	user.Userid = id.String()
-	log.Println("Receive User Json", user)
+
 	err := models.CreateUser(repository.Db, &user)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -69,8 +76,8 @@ func (repository *UserRepo) GetUser(c *gin.Context) {
 //get user by username
 func (repository *UserRepo) GetUserByUsername(c *gin.Context) {
 	username, _ := c.Params.Get("username")
-	var user []models.User
-	err := models.GetUserByUsername(repository.Db, &user, username)
+	var users []models.User
+	err := models.GetUserByUsername(repository.Db, &users, username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -80,7 +87,7 @@ func (repository *UserRepo) GetUserByUsername(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, users)
 }
 
 // update user
