@@ -34,6 +34,7 @@ func setupRouter() *gin.Engine {
 	r.POST("/users", userRepo.CreateUser)
 	r.GET("/users", userRepo.GetUsers)
 	r.GET("/users/:id", userRepo.GetUser)
+	r.GET("/username/:username", userRepo.GetUserByUsername)
 	r.PUT("/users/:id", userRepo.UpdateUser)
 	r.DELETE("/users/:id", userRepo.DeleteUser)
 
