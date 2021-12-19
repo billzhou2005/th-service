@@ -6,33 +6,14 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `json:"username"`
-	CardID   int    `json:"cardid"`
+	Username  string `json:"username"`
+	Userid    string `json:"userid"`
+	Passwd    string `json:"passwd"`
+	Email     string `json:"email"`
+	Telephone int    `json:"telephone"`
+	CardID    int    `json:"cardid"`
 }
 
-/*{
-	"username": "player1",
-	"cards": {
-		"cardone": {
-			"points": 6,
-			"suits": 4
-		},
-		"cardtwo": {
-			"points": 9,
-			"suits": 1
-		},
-		"cardthree": {
-			"points": 9,
-			"suits": 3
-		}
-	},
-	"cardstype": "highcard",
-	"cifirst": 9,
-	"cisecond": 9,
-	"cithird": 6,
-	"Cardsscore": 0
-}*/
-//create a user
 func CreateUser(db *gorm.DB, User *User) (err error) {
 	err = db.Create(User).Error
 	if err != nil {
@@ -53,6 +34,15 @@ func GetUsers(db *gorm.DB, User *[]User) (err error) {
 //get user by id
 func GetUser(db *gorm.DB, User *User, id string) (err error) {
 	err = db.Where("id = ?", id).First(User).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//get user by username
+func GetUserByUsername(db *gorm.DB, User *[]User, username string) (err error) {
+	err = db.Where("username = ?", username).Find(User).Error
 	if err != nil {
 		return err
 	}

@@ -23,10 +23,18 @@ func setupRouter() *gin.Engine {
 	r.PUT("/tables/:id", tableRepo.UpdateTable)
 	r.DELETE("/tables/:id", tableRepo.DeleteTable)
 
+	bizinfoRepo := controllers.NewBizInfo()
+	r.POST("/bizinfo", bizinfoRepo.CreateBizInfo)
+	r.GET("/bizinfo", bizinfoRepo.GetBizInfos)
+	r.GET("/bizinfo/:id", bizinfoRepo.GetBizInfo)
+	r.PUT("/bizinfo/:id", bizinfoRepo.UpdateBizInfo)
+	r.DELETE("/bizinfo/:id", bizinfoRepo.DeleteBizInfo)
+
 	userRepo := controllers.New()
 	r.POST("/users", userRepo.CreateUser)
 	r.GET("/users", userRepo.GetUsers)
 	r.GET("/users/:id", userRepo.GetUser)
+	r.GET("/username/:username", userRepo.GetUserByUsername)
 	r.PUT("/users/:id", userRepo.UpdateUser)
 	r.DELETE("/users/:id", userRepo.DeleteUser)
 

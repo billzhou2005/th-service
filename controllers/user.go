@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"th-service/database"
 	"th-service/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +27,9 @@ func New() *UserRepo {
 func (repository *UserRepo) CreateUser(c *gin.Context) {
 	var user models.User
 	c.BindJSON(&user)
+	id := ksuid.New()
+	user.Userid = id.String()
+	log.Println("Receive User Json", user)
 	err := models.CreateUser(repository.Db, &user)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -49,6 +54,23 @@ func (repository *UserRepo) GetUser(c *gin.Context) {
 	id, _ := c.Params.Get("id")
 	var user models.User
 	err := models.GetUser(repository.Db, &user, id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+//get user by username
+func (repository *UserRepo) GetUserByUsername(c *gin.Context) {
+	username, _ := c.Params.Get("username")
+	var user []models.User
+	err := models.GetUserByUsername(repository.Db, &user, username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)
