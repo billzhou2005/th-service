@@ -28,18 +28,6 @@ type Card struct {
 	Suits  int `json:"suits"`
 }
 
-/*
-type Player struct {
-	Username   string `json:"username"`
-	Cards      Cards  `json:"cards"`
-	Cardstype  string `json:"cardstype"`
-	CIfirst    int    `json:"cifirst"`
-	CIsecond   int    `json:"cisecond"`
-	CIthird    int    `json:"cithird"`
-	Cardsscore int    `json:"Cardsscore"`
-}
-*/
-
 func Cardgen(numofplayers int) [9]Player {
 	var players [9]Player
 

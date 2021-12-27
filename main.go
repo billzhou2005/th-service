@@ -15,6 +15,9 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
+	ftkRepo := controllers.NewFtk()
+	r.GET("/ftk", ftkRepo.CreateFtkDbFromFtkGen)
+
 	tableRepo := controllers.Newtable()
 	r.GET("/cardgen", tableRepo.CreateTableFromCardgen)
 	r.POST("/tables", tableRepo.CreateTable)
