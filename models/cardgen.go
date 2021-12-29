@@ -40,7 +40,7 @@ func Cardgen(numofplayers int) [9]Player {
 	//fmt.Println(t1)
 	//for i := 0; i < 3; i++ {
 	//黑桃 1（spade 0-12）、红桃 2（heart 13-25）、梅花 3（club 26-38）、方块 4（dianmond 39-51）
-	nums := generateRandomNumber(0, 51, 27)
+	nums := generateRandomNumber(0, 52, 27)
 	//nums[0] = 45
 	//nums[1] = 9
 	//nums[2] = 35
