@@ -30,14 +30,22 @@ func (repository *UserRepo) CreateUser(c *gin.Context) {
 	c.BindJSON(&user)
 	_ = models.GetUserByUsername(repository.Db, &users, user.Username)
 	if len(users) > 0 {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "用户名已经被注册！"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "username was registered!", "userWsid": users[0].UserWsid})
 		return
+	}
+
+	var lastUser models.User
+	err := models.GetLastUser(repository.Db, &lastUser)
+	if err != nil { //init
+		user.UserWsid = 1100000
+	} else {
+		user.UserWsid = lastUser.UserWsid + 1
 	}
 
 	id := ksuid.New()
 	user.Userid = id.String()
 
-	err := models.CreateUser(repository.Db, &user)
+	err = models.CreateUser(repository.Db, &user)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
