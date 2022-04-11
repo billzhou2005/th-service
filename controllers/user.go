@@ -30,7 +30,7 @@ func (repository *UserRepo) CreateUser(c *gin.Context) {
 	c.BindJSON(&user)
 	_ = models.GetUserByUsername(repository.Db, &users, user.Username)
 	if len(users) > 0 {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "用户名已经被注册！"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "用户名已经被注册!"})
 		return
 	}
 
